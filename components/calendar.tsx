@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { fromDay, toDay } from "@/lib/calc";
+import { monthYear, thaiDate } from "@/lib/format";
 
 type Props = {
   value: string;
@@ -12,7 +13,7 @@ type Props = {
   onSelect: (iso: string) => void;
 };
 
-const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const WEEKDAYS = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"];
 
 export function Calendar({ value, max, marked, onSelect }: Props) {
   const [month, setMonth] = useState(value.slice(0, 7)); // "YYYY-MM"
@@ -37,19 +38,19 @@ export function Calendar({ value, max, marked, onSelect }: Props) {
         <button
           type="button"
           onClick={() => shift(-1)}
-          aria-label="Previous month"
+          aria-label="เดือนก่อน"
           className="flex size-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
         >
           <ChevronLeft className="size-4" />
         </button>
         <p className="text-sm font-semibold text-slate-800" aria-live="polite">
-          {new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}
+          {monthYear(month)}
         </p>
         <button
           type="button"
           onClick={() => shift(1)}
           disabled={!canNext}
-          aria-label="Next month"
+          aria-label="เดือนถัดไป"
           className="flex size-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 disabled:opacity-25 disabled:hover:bg-transparent"
         >
           <ChevronRight className="size-4" />
@@ -75,7 +76,7 @@ export function Calendar({ value, max, marked, onSelect }: Props) {
               disabled={future}
               onClick={() => onSelect(iso)}
               aria-pressed={selected}
-              aria-label={`${new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" })}${hasReading ? ", has a reading" : ""}`}
+              aria-label={`${thaiDate(iso, { weekday: "long", day: "numeric", month: "long" })}${hasReading ? " (มีบันทึกแล้ว)" : ""}`}
               className={`relative flex h-10 items-center justify-center rounded-lg text-sm tabular-nums transition ${
                 selected
                   ? "bg-emerald-600 font-semibold text-white shadow-sm"

@@ -31,7 +31,7 @@ export function PinGate() {
           <Zap className="size-7" strokeWidth={2.25} />
         </div>
         <h1 className="text-xl font-semibold tracking-tight">Energie</h1>
-        <p className="mt-1 text-sm text-slate-500">Enter the house PIN</p>
+        <p className="mt-1 text-sm text-slate-500">กรอกรหัส PIN เพื่อเข้าใช้งาน</p>
 
         <label className="relative mt-8 block">
           <span className="sr-only">PIN</span>
@@ -79,7 +79,7 @@ export function PinGate() {
           disabled={pending || pin.length !== 4}
           className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 font-medium text-white transition hover:bg-slate-800 disabled:opacity-40"
         >
-          <Lock className="size-4" /> {pending ? "Checking…" : "Unlock"}
+          <Lock className="size-4" /> {pending ? "กำลังตรวจสอบ…" : "ปลดล็อก"}
         </button>
       </form>
     </main>

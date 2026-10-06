@@ -38,18 +38,18 @@ export function ReadingForm({ points, today, rate }: Props) {
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Gauge className="size-4 text-emerald-600" /> New reading
+          <Gauge className="size-4 text-emerald-600" /> จดเลขมิเตอร์
         </h2>
         {latest && (
           <span className="text-xs text-slate-500">
-            Last: <span className="font-mono text-slate-700">{meter(latest.value)}</span> · {shortDate(latest.date)}
+            ล่าสุด <span className="font-mono text-slate-700">{meter(latest.value)}</span> · {shortDate(latest.date)}
           </span>
         )}
       </div>
 
       <form action={action} className="space-y-3">
         <label className="block">
-          <span className="mb-1.5 block text-xs font-medium text-slate-500">Meter reading (kWh)</span>
+          <span className="mb-1.5 block text-xs font-medium text-slate-500">เลขมิเตอร์ (หน่วย)</span>
           <input
             ref={inputRef}
             name="kwh"
@@ -57,7 +57,7 @@ export function ReadingForm({ points, today, rate }: Props) {
             inputMode="decimal"
             enterKeyHint="done"
             autoComplete="off"
-            placeholder={latest ? meter(latest.value) : "e.g. 14250.5"}
+            placeholder={latest ? meter(latest.value) : "เช่น 14250.5"}
             value={value}
             onChange={(e) => {
               setValue(e.target.value.replace(/[^\d.,]/g, ""));
@@ -85,7 +85,7 @@ export function ReadingForm({ points, today, rate }: Props) {
           className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40"
         >
           <Plus className="size-5" strokeWidth={2.5} />
-          {pending ? "Saving…" : "Save reading"}
+          {pending ? "กำลังบันทึก…" : "บันทึก"}
         </button>
 
         <div className="min-h-5 text-sm" aria-live="polite">
@@ -97,10 +97,10 @@ export function ReadingForm({ points, today, rate }: Props) {
           ) : delta != null && days != null && days > 0 ? (
             <p className={delta < 0 ? "text-amber-600" : "text-slate-500"}>
               {delta < 0 ? (
-                "Lower than the previous reading — double-check the digits."
+                "น้อยกว่าเลขครั้งก่อน — ตรวจสอบตัวเลขอีกครั้ง"
               ) : (
                 <>
-                  <span className="font-medium text-slate-700">+{kwh(delta)} kWh</span> over {days} day{days === 1 ? "" : "s"} ·
+                  <span className="font-medium text-slate-700">+{kwh(delta)} หน่วย</span> ใน {days} วัน ·
                   ≈ <span className="font-medium text-slate-700">{baht(delta * rate)}</span>
                 </>
               )}

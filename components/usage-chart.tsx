@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import { BarChart3, ChartColumn, ChartLine, ChevronLeft, ChevronRight, Sigma } from "lucide-react";
 import { daySeries, type MonthBar, type Point } from "@/lib/calc";
-import { baht, kwh, shortDate } from "@/lib/format";
+import { baht, kwh, monthYear, shortDate } from "@/lib/format";
 
 const SERIES = "#059669"; // emerald-600, validated against the light surface
 const INK_MUTED = "#94a3b8";
@@ -67,7 +67,7 @@ export function UsageChart({ points, months, rate, today }: Props) {
 
   const { view, metric, mark, cumulative } = prefs;
   const m = (v: number | null | undefined) => (v == null ? null : metric === "kwh" ? v : v * rate);
-  const fmt = (v: number) => (metric === "kwh" ? `${kwh(v)} kWh` : baht(v, !cumulative && view === "days" ? 1 : 0));
+  const fmt = (v: number) => (metric === "kwh" ? `${kwh(v)} หน่วย` : baht(v, !cumulative && view === "days" ? 1 : 0));
 
   const data: Datum[] = useMemo(() => {
     if (view === "months") {
@@ -79,7 +79,7 @@ export function UsageChart({ points, months, rate, today }: Props) {
           title: mo.label,
           value: m(cumulative ? running : mo.kwh),
           faded: !cumulative && mo.partial,
-          note: cumulative ? "Running total" : mo.partial ? "Partial month" : undefined,
+          note: cumulative ? "ยอดสะสม" : mo.partial ? "ข้อมูลไม่ครบเดือน" : undefined,
         };
       });
     }
@@ -90,27 +90,23 @@ export function UsageChart({ points, months, rate, today }: Props) {
       projected: cumulative ? m(d.projected) : null,
       note: cumulative
         ? d.estimated
-          ? "Estimated between readings"
+          ? "ประมาณจากบันทึกก่อน–หลัง"
           : undefined
         : d.spanDays
-          ? `Avg over ${d.spanDays} day${d.spanDays === 1 ? "" : "s"}`
+          ? `เฉลี่ยจาก ${d.spanDays} วัน`
           : undefined,
     }));
   }, [view, metric, cumulative, months, points, monthKey, rate, today]);
 
   const hasData = data.some((d) => d.value != null);
-  const unitLabel = metric === "kwh" ? "kWh" : "Baht";
+  const unitLabel = metric === "kwh" ? "หน่วย" : "บาท";
   const subtitle =
     view === "months"
-      ? cumulative ? `${unitLabel}, running total` : `${unitLabel} per month`
-      : cumulative ? `${unitLabel} so far this month` : `${unitLabel} per day`;
+      ? cumulative ? `${unitLabel} (สะสม)` : `${unitLabel} ต่อเดือน`
+      : cumulative ? `${unitLabel} สะสมในเดือนนี้` : `${unitLabel} ต่อวัน`;
 
   const monthIdx = monthKeys.indexOf(monthKey);
-  const monthTitle = new Date(`${monthKey}-01T00:00:00Z`).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  const monthTitle = monthYear(monthKey);
   const dayTicks = view === "days" ? ["1", "5", "10", "15", "20", "25", String(data.length)] : undefined;
   const todayLabel = view === "days" && mark === "line" && today.startsWith(monthKey) ? String(Number(today.slice(8))) : null;
 
@@ -119,30 +115,30 @@ export function UsageChart({ points, months, rate, today }: Props) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="flex items-center gap-2 text-sm font-semibold">
-            <BarChart3 className="size-4 text-slate-400" /> Usage over time
+            <BarChart3 className="size-4 text-slate-400" /> การใช้ไฟ
           </h2>
           <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>
         </div>
-        <Segmented value={metric} onChange={(v) => update({ metric: v })} options={[["kwh", "kWh"], ["cost", "฿"]]} label="Unit" />
+        <Segmented value={metric} onChange={(v) => update({ metric: v })} options={[["kwh", "หน่วย"], ["cost", "฿"]]} label="หน่วยที่แสดง" />
       </div>
 
       <div className="mt-4 flex items-center gap-2">
-        <Segmented value={view} onChange={(v) => update({ view: v })} options={[["days", "Days"], ["months", "Months"]]} label="Range" />
+        <Segmented value={view} onChange={(v) => update({ view: v })} options={[["days", "รายวัน"], ["months", "รายเดือน"]]} label="ช่วงเวลา" />
         <div className="flex-1" />
         <Segmented
           value={mark}
           onChange={(v) => update({ mark: v })}
-          label="Chart type"
+          label="รูปแบบกราฟ"
           options={[
-            ["bar", <ChartColumn key="b" className="size-4" aria-label="Bars" />],
-            ["line", <ChartLine key="l" className="size-4" aria-label="Line" />],
+            ["bar", <ChartColumn key="b" className="size-4" aria-label="กราฟแท่ง" />],
+            ["line", <ChartLine key="l" className="size-4" aria-label="กราฟเส้น" />],
           ]}
         />
         <button
           type="button"
           aria-pressed={cumulative}
-          aria-label="Running total"
-          title="Running total"
+          aria-label="ยอดสะสม"
+          title="ยอดสะสม"
           onClick={() => update({ cumulative: !cumulative })}
           className={`flex h-10 w-10 items-center justify-center rounded-lg border transition ${
             cumulative
@@ -156,14 +152,14 @@ export function UsageChart({ points, months, rate, today }: Props) {
 
       {view === "days" && (
         <div className="mt-3 flex items-center gap-1">
-          <NavButton disabled={monthIdx <= 0} onClick={() => setMonthKey(monthKeys[monthIdx - 1])} label="Previous month">
+          <NavButton disabled={monthIdx <= 0} onClick={() => setMonthKey(monthKeys[monthIdx - 1])} label="เดือนก่อน">
             <ChevronLeft className="size-4" />
           </NavButton>
           <span className="min-w-28 text-center text-sm font-medium text-slate-700">{monthTitle}</span>
           <NavButton
             disabled={monthIdx >= monthKeys.length - 1}
             onClick={() => setMonthKey(monthKeys[monthIdx + 1])}
-            label="Next month"
+            label="เดือนถัดไป"
           >
             <ChevronRight className="size-4" />
           </NavButton>
@@ -172,7 +168,7 @@ export function UsageChart({ points, months, rate, today }: Props) {
 
       {!hasData ? (
         <div className="mt-4 flex h-56 items-center justify-center rounded-xl border border-dashed border-slate-200 px-6 text-center text-sm text-slate-500">
-          {points.length < 2 ? "Add at least two readings to see a trend." : "No readings in this month."}
+          {points.length < 2 ? "จดเลขมิเตอร์อย่างน้อย 2 ครั้งเพื่อดูแนวโน้ม" : "ไม่มีบันทึกในเดือนนี้"}
         </div>
       ) : (
         <div className="mt-4 h-56 sm:h-64">
@@ -200,7 +196,7 @@ export function UsageChart({ points, months, rate, today }: Props) {
                   x={todayLabel}
                   stroke="#cbd5e1"
                   strokeDasharray="3 3"
-                  label={{ value: "Today", position: "insideTopRight", fill: INK_MUTED, fontSize: 10 }}
+                  label={{ value: "วันนี้", position: "insideTopRight", fill: INK_MUTED, fontSize: 10 }}
                 />
               )}
               <Tooltip
@@ -214,12 +210,12 @@ export function UsageChart({ points, months, rate, today }: Props) {
                       {d.value != null && (
                         <p className="mt-0.5 text-sm font-semibold tabular-nums text-slate-900">
                           {fmt(d.value)}
-                          {view === "days" && !cumulative && <span className="font-normal text-slate-500">/day</span>}
+                          {view === "days" && !cumulative && <span className="font-normal text-slate-500">/วัน</span>}
                         </p>
                       )}
                       {d.projected != null && d.value == null && (
                         <p className="mt-0.5 text-sm font-semibold tabular-nums text-slate-900">
-                          {fmt(d.projected)} <span className="font-normal text-slate-500">projected</span>
+                          {fmt(d.projected)} <span className="font-normal text-slate-500">คาดการณ์</span>
                         </p>
                       )}
                       {d.note && <p className="mt-0.5 text-slate-400">{d.note}</p>}
@@ -266,13 +262,13 @@ export function UsageChart({ points, months, rate, today }: Props) {
 
       <p className="mt-2 min-h-4 text-xs text-slate-400">
         {view === "days" && cumulative && data.some((d) => d.projected != null)
-          ? "Dashed line: projection to month end at your current pace."
+          ? "เส้นประ: คาดการณ์ถึงสิ้นเดือนตามอัตราการใช้ปัจจุบัน"
           : view === "days"
             ? mark === "line"
-              ? "Only days with a reading are plotted; the line joins the gaps."
-              : "Each bar is the daily average since the previous reading."
+              ? "แสดงเฉพาะวันที่มีการจด เส้นจะเชื่อมช่วงที่ไม่มีข้อมูลให้"
+              : "แต่ละแท่งคือค่าเฉลี่ยต่อวันนับจากการจดครั้งก่อน"
             : !cumulative && data.some((d) => d.faded)
-              ? "Lighter bars are months only partly covered by readings."
+              ? "แท่งสีอ่อนคือเดือนที่มีข้อมูลไม่ครบ"
               : ""}
       </p>
     </section>

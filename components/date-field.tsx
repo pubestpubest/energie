@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { fromDay, toDay } from "@/lib/calc";
+import { thaiDate } from "@/lib/format";
 import { Calendar } from "./calendar";
 
 type Props = {
@@ -16,8 +17,7 @@ type Props = {
   variant?: "chips" | "button";
 };
 
-const label = (iso: string, opts: Intl.DateTimeFormatOptions) =>
-  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { ...opts, timeZone: "UTC" });
+const label = thaiDate;
 
 export function DateField({ name, value, max, onChange, marked, variant = "chips" }: Props) {
   const [open, setOpen] = useState(false);
@@ -53,7 +53,7 @@ export function DateField({ name, value, max, onChange, marked, variant = "chips
   const popover = open && (
     <div
       role="dialog"
-      aria-label="Choose a date"
+      aria-label="เลือกวันที่"
       className={`absolute top-full z-30 mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl shadow-slate-900/10 ${
         variant === "chips" ? "right-0 w-full max-w-[20rem]" : "left-0 w-72"
       }`}
@@ -61,7 +61,7 @@ export function DateField({ name, value, max, onChange, marked, variant = "chips
       <Calendar value={value} max={max} marked={marked} onSelect={pick} />
       {marked && marked.size > 0 && (
         <p className="mt-2 flex items-center gap-1.5 border-t border-slate-100 pt-2 text-[11px] text-slate-400">
-          <span className="size-1 rounded-full bg-emerald-500" /> Has a reading
+          <span className="size-1 rounded-full bg-emerald-500" /> มีบันทึกแล้ว
         </p>
       )}
     </div>
@@ -85,7 +85,7 @@ export function DateField({ name, value, max, onChange, marked, variant = "chips
         >
           <CalendarDays className="size-4 shrink-0 text-slate-400" />
           <span className="truncate">
-            {label(value, { weekday: "short", month: "short", day: "numeric", ...(value.slice(0, 4) !== max.slice(0, 4) && { year: "numeric" }) })}
+            {label(value, { weekday: "short", day: "numeric", month: "short", ...(value.slice(0, 4) !== max.slice(0, 4) && { year: "numeric" }) })}
           </span>
         </button>
         {popover}
@@ -104,12 +104,12 @@ export function DateField({ name, value, max, onChange, marked, variant = "chips
   return (
     <div ref={rootRef} className="relative">
       {hidden}
-      <div className="grid grid-cols-[1fr_1fr_1.3fr] gap-2" role="group" aria-label="Reading date">
+      <div className="grid grid-cols-[1fr_1fr_1.3fr] gap-2" role="group" aria-label="วันที่จด">
         <button type="button" aria-pressed={value === max} onClick={() => pick(max)} className={chip(value === max)}>
-          Today
+          วันนี้
         </button>
         <button type="button" aria-pressed={value === yesterday} onClick={() => pick(yesterday)} className={chip(value === yesterday)}>
-          Yesterday
+          เมื่อวาน
         </button>
         <button
           ref={triggerRef}
@@ -121,7 +121,7 @@ export function DateField({ name, value, max, onChange, marked, variant = "chips
           className={`${chip(custom || open)} w-full`}
         >
           <CalendarDays className="size-4 shrink-0" />
-          <span className="truncate">{custom ? label(value, { weekday: "short", month: "short", day: "numeric" }) : "Pick date"}</span>
+          <span className="truncate">{custom ? label(value, { day: "numeric", month: "short" }) : "เลือกวัน"}</span>
         </button>
       </div>
       {popover}

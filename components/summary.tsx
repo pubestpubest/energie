@@ -10,19 +10,19 @@ export function ForecastCard({ stats }: { stats: MonthStats }) {
     <section className="relative overflow-hidden rounded-2xl bg-slate-900 p-5 text-white shadow-sm">
       <div className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-emerald-500/20 blur-2xl" />
       <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-emerald-300">
-        <TrendingUp className="size-4" /> {stats.monthLabel} forecast
+        <TrendingUp className="size-4" /> คาดการณ์ {stats.monthLabel}
       </p>
 
       {forecastKwh == null || forecastCost == null ? (
         <p className="mt-3 text-base text-slate-300">
-          Add two readings a few days apart and we&apos;ll project this month&apos;s bill.
+          จดเลขมิเตอร์อย่างน้อย 2 ครั้ง ห่างกันสักสองสามวัน แล้วระบบจะคาดการณ์ค่าไฟเดือนนี้ให้
         </p>
       ) : (
         <>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-300">
-            At your current pace, your estimated bill this month will be{" "}
+            ถ้าใช้ไฟในอัตรานี้ต่อไป ค่าไฟเดือนนี้จะอยู่ที่ประมาณ{" "}
             <span className="font-semibold text-white">{baht(forecastCost)}</span>{" "}
-            <span className="text-slate-400">({kwh(forecastKwh, 0)} kWh)</span>.
+            <span className="text-slate-400">({kwh(forecastKwh, 0)} หน่วย)</span>
           </p>
           <p className="mt-4 text-4xl font-semibold tracking-tight tabular-nums">{baht(forecastCost)}</p>
 
@@ -32,15 +32,15 @@ export function ForecastCard({ stats }: { stats: MonthStats }) {
             </div>
             <div className="mt-2 flex justify-between text-xs text-slate-400">
               <span>
-                {kwh(usedKwh)} kWh so far
+                ใช้ไปแล้ว {kwh(usedKwh)} หน่วย
               </span>
-              <span>{kwh(forecastKwh, 0)} kWh projected</span>
+              <span>คาดว่า {kwh(forecastKwh, 0)} หน่วย</span>
             </div>
           </div>
 
           {basis === "recent" && (
             <p className="mt-3 text-xs text-slate-400">
-              No reading yet this month — projected from your most recent pace.
+              ยังไม่ได้จดเลขเดือนนี้ — คาดการณ์จากอัตราการใช้ล่าสุด
             </p>
           )}
         </>
@@ -51,17 +51,17 @@ export function ForecastCard({ stats }: { stats: MonthStats }) {
 
 export function StatTiles({ stats, rate }: { stats: MonthStats; rate: number }) {
   const since = stats.since
-    ? `since ${shortDate(stats.since.date)}`
-    : "no reading yet";
+    ? `ตั้งแต่ ${shortDate(stats.since.date)}`
+    : "ยังไม่มีข้อมูล";
   const tiles = [
-    { icon: Gauge, label: "This month", value: kwh(stats.usedKwh), unit: "kWh", hint: since },
-    { icon: Coins, label: "Cost so far", value: baht(stats.usedCost), unit: "", hint: since },
+    { icon: Gauge, label: "เดือนนี้", value: kwh(stats.usedKwh), unit: "หน่วย", hint: since },
+    { icon: Coins, label: "ค่าไฟถึงตอนนี้", value: baht(stats.usedCost), unit: "", hint: since },
     {
       icon: CalendarClock,
-      label: "Daily avg",
+      label: "เฉลี่ยต่อวัน",
       value: stats.avgDaily == null ? "—" : kwh(stats.avgDaily),
-      unit: stats.avgDaily == null ? "" : "kWh",
-      hint: stats.avgDaily == null ? "need 2 readings" : `≈ ${baht(stats.avgDaily * rate, 1)}/day`,
+      unit: stats.avgDaily == null ? "" : "หน่วย",
+      hint: stats.avgDaily == null ? "ต้องจดอย่างน้อย 2 ครั้ง" : `≈ ${baht(stats.avgDaily * rate, 1)}/วัน`,
     },
   ];
 

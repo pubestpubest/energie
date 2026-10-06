@@ -88,8 +88,8 @@ function monthBounds(iso: string) {
   return { y, m, start, end };
 }
 
-const monthFmt = new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" });
-const monthYearFmt = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+const monthFmt = new Intl.DateTimeFormat("th-TH", { month: "short", timeZone: "UTC" });
+const monthYearFmt = new Intl.DateTimeFormat("th-TH", { month: "long", year: "numeric", timeZone: "UTC" });
 
 /** Monthly totals, splitting intervals that straddle a month boundary by interpolation. */
 export function monthlySeries(points: Point[], rate: number): MonthBar[] {
@@ -110,7 +110,7 @@ export function monthlySeries(points: Point[], rate: number): MonthBar[] {
       const date = new Date(start * DAY_MS);
       bars.push({
         key: `${y}-${String(m).padStart(2, "0")}`,
-        label: `${monthFmt.format(date)}${m === 1 || bars.length === 0 ? ` ’${String(y).slice(2)}` : ""}`,
+        label: `${monthFmt.format(date)}${m === 1 || bars.length === 0 ? ` ${String(y + 543).slice(2)}` : ""}`,
         kwh,
         cost: kwh * rate,
         partial: from > start || to < end,

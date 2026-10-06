@@ -30,7 +30,7 @@ export default async function Home() {
           </div>
           <div>
             <h1 className="text-base font-semibold leading-tight tracking-tight">Energie</h1>
-            <p className="text-xs text-slate-500">Household electricity</p>
+            <p className="text-xs text-slate-500">ค่าไฟในบ้าน</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -38,7 +38,7 @@ export default async function Home() {
           <form action={lock}>
             <button
               type="submit"
-              aria-label="Lock"
+              aria-label="ล็อก"
               className="flex size-10 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LogOut className="size-4" />

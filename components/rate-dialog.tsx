@@ -20,7 +20,7 @@ export function RateButton({ rate }: { rate: number }) {
         className="inline-flex h-10 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 text-sm font-medium text-slate-700 shadow-xs transition hover:bg-slate-50"
       >
         <Settings2 className="size-4 text-slate-400" />฿{rate}
-        <span className="text-slate-400">/kWh</span>
+        <span className="text-slate-400">/หน่วย</span>
       </button>
 
       <dialog
@@ -31,13 +31,13 @@ export function RateButton({ rate }: { rate: number }) {
         <form action={action} className="p-5">
           <div className="mb-4 flex items-start justify-between">
             <div>
-              <h2 className="text-base font-semibold">Electricity rate</h2>
-              <p className="mt-0.5 text-sm text-slate-500">Used for every cost and forecast.</p>
+              <h2 className="text-base font-semibold">ค่าไฟต่อหน่วย</h2>
+              <p className="mt-0.5 text-sm text-slate-500">ใช้คำนวณค่าไฟและการคาดการณ์ทั้งหมด</p>
             </div>
             <button
               type="button"
               onClick={() => ref.current?.close()}
-              aria-label="Close"
+              aria-label="ปิด"
               className="-mr-2 -mt-1 flex size-10 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"
             >
               <X className="size-4" />
@@ -45,7 +45,7 @@ export function RateButton({ rate }: { rate: number }) {
           </div>
 
           <label className="relative block">
-            <span className="sr-only">Baht per kWh</span>
+            <span className="sr-only">บาทต่อหน่วย</span>
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xl text-slate-400">฿</span>
             <input
               key={rate}
@@ -56,7 +56,7 @@ export function RateButton({ rate }: { rate: number }) {
               required
               className="h-14 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-20 font-mono text-2xl font-semibold outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/15"
             />
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">per kWh</span>
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">ต่อหน่วย</span>
           </label>
 
           {state.at && !state.ok && (
@@ -70,7 +70,7 @@ export function RateButton({ rate }: { rate: number }) {
             disabled={pending}
             className="mt-4 h-12 w-full rounded-xl bg-slate-900 font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
           >
-            {pending ? "Saving…" : "Save rate"}
+            {pending ? "กำลังบันทึก…" : "บันทึกค่าไฟ"}
           </button>
         </form>
       </dialog>
